@@ -2,7 +2,7 @@
 
 > Практические workflow для разработки, дебага, code review и проектной работы. Anti-patterns.
 
-Назад: [[LLM Wiki]] | Папка: `Практики/` | Связанные: [[Prompt Engineering для разработки]], [[Claude Code]], [[GSD (Get Shit Done)]]
+Назад: [[README]] | Папка: `Практики/` | Связанные: [[Prompt Engineering для разработки]], [[Claude Code]], [[GSD (Get Shit Done)]]
 
 ---
 

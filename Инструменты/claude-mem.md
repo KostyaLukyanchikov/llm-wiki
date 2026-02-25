@@ -2,7 +2,7 @@
 
 > Persistent memory plugin для [[Claude Code]]. Сохраняет контекст между сессиями через lifecycle hooks и semantic search. ([docs](https://docs.claude-mem.ai/introduction) | [GitHub](https://github.com/thedotmack/claude-mem))
 
-Назад: [[LLM Wiki]] | Папка: `Инструменты/`
+Назад: [[README]] | Папка: `Инструменты/`
 
 ---
 

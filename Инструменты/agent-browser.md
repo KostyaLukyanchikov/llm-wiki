@@ -2,7 +2,7 @@
 
 > Headless browser automation CLI для AI-агентов. Позволяет [[Claude Code]] взаимодействовать с веб-интерфейсами. ([GitHub](https://github.com/vercel-labs/agent-browser))
 
-Назад: [[LLM Wiki]] | Папка: `Инструменты/`
+Назад: [[README]] | Папка: `Инструменты/`
 
 ---
 

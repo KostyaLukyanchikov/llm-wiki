@@ -2,7 +2,7 @@
 
 > Agentic skills framework для структурированного coding workflow. Заставляет AI-агента проходить через фазы design -> planning -> execution -> testing -> review.
 
-Назад: [[LLM Wiki]] | Папка: `Изучить/` | Статус: **Изучить**
+Назад: [[README]] | Папка: `Изучить/` | Статус: **Изучить**
 
 ---
 

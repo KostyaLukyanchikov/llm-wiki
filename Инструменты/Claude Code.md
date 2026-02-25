@@ -2,7 +2,7 @@
 
 > CLI-интерфейс от Anthropic для работы с Claude, расширяемый через sub-agents, skills, hooks и MCP.
 
-Назад: [[LLM Wiki]] | Папка: `Инструменты/`
+Назад: [[README]] | Папка: `Инструменты/`
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Курированный каталог всех ресурсов экосистемы Claude Code: skills, hooks, orchestrators, plugins, config managers.
 
-Назад: [[LLM Wiki]] | Папка: `Изучить/` | Статус: **Изучить**
+Назад: [[README]] | Папка: `Изучить/` | Статус: **Изучить**
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Стандарт для предоставления контента сайтов в machine-readable формате для LLM. Предложен Jeremy Howard (fast.ai), де-факто принят индустрией. ([Habr](https://habr.com/ru/articles/974882/) | [llmstxt.org](https://llmstxt.org))
 
-Назад: [[LLM Wiki]] | Папка: `Изучить/` | Статус: **Изучить**
+Назад: [[README]] | Папка: `Изучить/` | Статус: **Изучить**
 
 ---
 

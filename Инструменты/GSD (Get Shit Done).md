@@ -2,7 +2,7 @@
 
 > Система meta-prompting и context engineering для [[Claude Code]]. Структурированный workflow от идеи до production, решающий проблему "context rot". ([GitHub](https://github.com/gsd-build/get-shit-done))
 
-Назад: [[LLM Wiki]] | Папка: `Инструменты/`
+Назад: [[README]] | Папка: `Инструменты/`
 
 ---
 
