@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM в работе разработчика: опыт и практики</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --purple: #a78bfa;
+    --green: #34d399;
+    --orange: #fb923c;
+    --red: #f87171;
+    --blue: #60a5fa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    padding: 4vh 8vw;
+    text-align: center;
+  }
+
+  .slide.active { display: flex; }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--purple);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    color: var(--purple);
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    color: var(--orange);
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+  }
+
+  p, li {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+  }
+
+  ul {
+    list-style: none;
+    text-align: left;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  ul li {
+    padding: 0.4em 0;
+    padding-left: 1.5em;
+    position: relative;
+  }
+
+  ul li::before {
+    content: ">";
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-weight: 700;
+  }
+
+  .accent { color: var(--orange); font-weight: 600; }
+  .highlight { color: var(--green); font-weight: 600; }
+  .dim { color: var(--text-dim); }
+  .purple { color: var(--purple); }
+
+  code, .code {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+    background: var(--bg-card);
+    color: var(--green);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .code-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2em 1.5em;
+    text-align: left;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+    font-size: clamp(0.8rem, 1.5vw, 1.15rem);
+    line-height: 1.7;
+    max-width: 900px;
+    width: 100%;
+    margin-top: 0.8rem;
+    overflow-x: auto;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  .code-block .prompt { color: var(--green); }
+  .code-block .comment { color: var(--text-dim); }
+  .code-block .keyword { color: var(--purple); }
+  .code-block .string { color: var(--orange); }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1100px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 1200px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2em 1.5em;
+  }
+
+  .card h3 { margin-bottom: 0.5rem; }
+  .card p, .card li { font-size: clamp(0.85rem, 1.4vw, 1.15rem); }
+
+  table {
+    border-collapse: collapse;
+    max-width: 1000px;
+    width: 100%;
+    margin-top: 0.8rem;
+    font-size: clamp(0.85rem, 1.4vw, 1.15rem);
+  }
+
+  th {
+    background: var(--bg-card);
+    color: var(--purple);
+    font-weight: 600;
+    padding: 0.6em 1em;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+
+  td {
+    padding: 0.5em 1em;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  tr:hover td { background: rgba(167, 139, 250, 0.05); }
+
+  .schema {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
+  }
+
+  .schema-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6em 1.2em;
+    font-weight: 600;
+  }
+
+  .schema-box.main {
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+
+  .schema-arrow { color: var(--text-dim); font-size: 1.3em; }
+
+  .vs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1.5rem;
+    max-width: 1000px;
+    width: 100%;
+    align-items: start;
+  }
+
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-dim);
+    padding-top: 2rem;
+  }
+
+  .bad { border-color: var(--red); }
+  .bad h3 { color: var(--red); }
+  .good { border-color: var(--green); }
+  .good h3 { color: var(--green); }
+
+  .bar-chart {
+    max-width: 700px;
+    width: 100%;
+    text-align: left;
+    margin-top: 0.5rem;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 80px;
+    align-items: center;
+    margin: 0.3em 0;
+    font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+  }
+
+  .bar-label { color: var(--text); text-align: right; padding-right: 1em; }
+  .bar-fill {
+    height: 1.4em;
+    border-radius: 3px;
+    background: var(--purple);
+    transition: width 0.5s;
+  }
+  .bar-value { padding-left: 0.8em; color: var(--text-dim); font-family: monospace; }
+
+  .flow {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0.8rem 0;
+  }
+
+  .flow-step {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5em 1em;
+    font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  }
+
+  .flow-arrow { color: var(--text-dim); }
+
+  .big-number {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    color: var(--purple);
+    line-height: 1;
+  }
+
+  .checklist {
+    text-align: left;
+    max-width: 800px;
+    width: 100%;
+  }
+
+  .checklist li {
+    padding: 0.2em 0;
+    padding-left: 2.5em;
+    font-size: clamp(0.8rem, 1.3vw, 1.15rem);
+    line-height: 1.4;
+  }
+
+  .checklist li::before {
+    content: "[ ]";
+    color: var(--green);
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  .nav {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 2rem;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    font-family: monospace;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--purple);
+    transition: width 0.3s;
+    z-index: 100;
+  }
+
+  .antipattern-list {
+    text-align: left;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .antipattern-list li {
+    padding: 0.15em 0 0.15em 1.5em;
+    font-size: clamp(0.8rem, 1.3vw, 1.1rem);
+    line-height: 1.4;
+  }
+
+  .antipattern-list li::before {
+    content: "x";
+    color: var(--red);
+  }
+
+  @media (max-width: 768px) {
+    .columns, .columns-3, .vs { grid-template-columns: 1fr; }
+    .slide { padding: 3vh 5vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="nav" id="nav"></div>
+
+<!-- Slide 1: Title -->
+<div class="slide active">
+  <h1>LLM в работе разработчика</h1>
+  <p class="subtitle">Опыт и практики</p>
+  <p class="dim" style="margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem);">Февраль 2026</p>
+</div>
+
+<!-- Slide 2: Agenda -->
+<div class="slide">
+  <h2>О чём поговорим</h2>
+  <ul>
+    <li><span class="accent">Инструменты</span> -- Claude Code, MCP, sub-agents, skills, hooks</li>
+    <li><span class="accent">Воркфлоу</span> -- три режима работы, debug, review, фичи</li>
+    <li><span class="accent">Prompt Engineering</span> -- контекст, CLAUDE.md, хорошие vs плохие промпты</li>
+    <li><span class="accent">Модели и цены</span> -- ландшафт 2026, матрица выбора</li>
+    <li><span class="accent">Anti-patterns</span> -- чего не делать и чеклист для старта</li>
+  </ul>
+</div>
+
+<!-- Slide 3: Current Stack -->
+<div class="slide">
+  <h2>Текущий стек</h2>
+  <div class="schema">
+    <div class="schema-box main">Claude Code</div>
+    <div class="schema-arrow">+</div>
+    <div class="schema-box">MCP</div>
+    <div class="schema-arrow">+</div>
+    <div class="schema-box">claude-mem</div>
+    <div class="schema-arrow">+</div>
+    <div class="schema-box">GSD</div>
+    <div class="schema-arrow">+</div>
+    <div class="schema-box">Context7</div>
+  </div>
+  <div style="margin-top: 2rem; max-width: 800px;">
+    <ul>
+      <li><span class="highlight">Claude Code</span> -- AI-агент в терминале, работает с любым редактором</li>
+      <li><span class="highlight">MCP</span> -- открытый протокол подключения внешних инструментов</li>
+      <li><span class="highlight">claude-mem</span> -- persistent memory между сессиями</li>
+      <li><span class="highlight">GSD</span> -- структурированный project management</li>
+      <li><span class="highlight">Context7</span> -- актуальная документация библиотек</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 4: Claude Code -->
+<div class="slide">
+  <h2>Claude Code</h2>
+  <p style="margin-bottom: 1rem;">AI-агент в терминале. Читает/пишет файлы, запускает команды, работает с git.</p>
+  <div class="columns">
+    <div class="card">
+      <h3>Ключевые фичи</h3>
+      <ul>
+        <li>Полный доступ к файловой системе и терминалу</li>
+        <li>Понимание контекста всего проекта</li>
+        <li>SWE-bench: <span class="highlight">80.8%</span> (лидер)</li>
+        <li>200K контекст (1M в beta)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>4 системы расширения</h3>
+      <ul>
+        <li><span class="accent">Sub-agents</span> -- параллельные специалисты</li>
+        <li><span class="accent">Skills</span> -- lazy-loaded инструкции</li>
+        <li><span class="accent">Hooks</span> -- автоматизация событий</li>
+        <li><span class="accent">MCP</span> -- внешние инструменты</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: MCP -->
+<div class="slide">
+  <h2>MCP-серверы</h2>
+  <p style="margin-bottom: 1rem;">Model Context Protocol -- открытый стандарт для подключения внешних инструментов и данных</p>
+  <table>
+    <tr><th>MCP Server</th><th>Назначение</th><th>Когда включать</th></tr>
+    <tr><td><span class="highlight">context7</span></td><td>Актуальная документация библиотек</td><td>Всегда для проекта</td></tr>
+    <tr><td><span class="highlight">claude-mem</span></td><td>Persistent memory между сессиями</td><td>Всегда</td></tr>
+    <tr><td><span class="highlight">GitHub MCP</span></td><td>Issues, PRs</td><td>При работе с GitHub</td></tr>
+    <tr><td><span class="highlight">Database MCP</span></td><td>Прямые запросы к БД</td><td>При дебаге данных</td></tr>
+    <tr><td><span class="highlight">Browser MCP</span></td><td>Визуальное тестирование</td><td>При работе с UI</td></tr>
+  </table>
+  <p class="dim" style="margin-top: 1rem; font-size: 0.9em;">Каждый MCP съедает контекст -- держи активными только нужные</p>
+</div>
+
+<!-- Slide 6: Sub-agents -->
+<div class="slide">
+  <h2>Sub-agents</h2>
+  <p style="margin-bottom: 1rem;">Специализированные AI-помощники в собственном context window</p>
+  <div class="columns-3">
+    <div class="card">
+      <h3 style="color: var(--blue);">Researcher</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+<span class="keyword">name:</span> <span class="string">research-code</span>
+<span class="keyword">model:</span> <span class="string">haiku</span>
+<span class="comment"># Быстрый поиск по коду</span>
+<span class="comment"># Паттерны, зависимости</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--green);">Implementer</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+<span class="keyword">name:</span> <span class="string">implementer</span>
+<span class="keyword">model:</span> <span class="string">opus</span>
+<span class="comment"># Реализует по плану</span>
+<span class="comment"># Следует конвенциям</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--red);">Reviewer</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+<span class="keyword">name:</span> <span class="string">reviewer</span>
+<span class="keyword">model:</span> <span class="string">sonnet</span>
+<span class="comment"># Баги, уязвимости</span>
+<span class="comment"># CRITICAL / WARNING</span>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top: 1rem;">Фильтруют output, работают параллельно, не засоряют основной контекст</p>
+</div>
+
+<!-- Slide 7: Skills & Hooks -->
+<div class="slide">
+  <h2>Skills и Hooks</h2>
+  <div class="columns">
+    <div class="card">
+      <h3>Skills -- lazy-loaded инструкции</h3>
+      <p style="margin-bottom: 0.5rem;">Загружаются только при вызове, не раздувают CLAUDE.md</p>
+      <div class="code-block" style="font-size: 0.8rem;">
+<span class="comment"># ~/.claude/skills/prisma/SKILL.md</span>
+<span class="keyword">description:</span> <span class="string">"Prisma migrations"</span>
+
+1. Обнови schema.prisma
+2. <span class="prompt">pnpm prisma migrate dev</span>
+3. Проверь SQL
+4. Протестируй rollback
+      </div>
+    </div>
+    <div class="card">
+      <h3>Hooks -- автоматизация событий</h3>
+      <p style="margin-bottom: 0.5rem;">Bash-команды или LLM-оценка по событиям жизненного цикла</p>
+      <div class="code-block" style="font-size: 0.8rem;">
+<span class="comment">// settings.json</span>
+{
+  <span class="string">"hooks"</span>: {
+    <span class="string">"PostToolUse"</span>: [{
+      <span class="string">"matcher"</span>: <span class="string">"Write|Edit"</span>,
+      <span class="string">"hooks"</span>: [{
+        <span class="string">"command"</span>: <span class="string">"./lint.sh"</span>
+      }]
+    }]
+  }
+}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Ecosystem -->
+<div class="slide">
+  <h2>Экосистема</h2>
+  <div class="columns-3">
+    <div class="card">
+      <h3 style="color: var(--purple);">claude-mem</h3>
+      <p>Persistent memory между сессиями</p>
+      <ul>
+        <li>Семантический поиск</li>
+        <li>Авто-сохранение решений</li>
+        <li>MCP-интеграция</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--blue);">Context7</h3>
+      <p>Актуальная документация библиотек</p>
+      <ul>
+        <li>Всегда свежие доки</li>
+        <li>Подключение через MCP</li>
+        <li>Нет галлюцинаций API</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--green);">GSD</h3>
+      <p>Структурированный project management</p>
+      <ul>
+        <li>plan &rarr; execute &rarr; verify</li>
+        <li>Roadmap и фазы</li>
+        <li>Атомарные коммиты</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Three Modes -->
+<div class="slide">
+  <h2>Три режима работы</h2>
+  <div class="columns-3">
+    <div class="card" style="border-color: var(--green);">
+      <h3 style="color: var(--green);">Agent-First</h3>
+      <p><span class="dim">95% задач</span></p>
+      <ul>
+        <li>Знакомые паттерны, CRUD</li>
+        <li>Plan Mode &rarr; итерируй</li>
+        <li>Потом execution</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: var(--orange);">
+      <h3>Human-First</h3>
+      <p><span class="dim">Нетривиальная логика</span></p>
+      <ul>
+        <li>Маленькие шаги + review</li>
+        <li>Коммит после каждого шага</li>
+        <li>Пропусти Plan Mode</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: var(--red);">
+      <h3 style="color: var(--red);">Manual + AI</h3>
+      <p><span class="dim">Новая архитектура</span></p>
+      <ul>
+        <li>Пиши сам</li>
+        <li>LLM для вопросов</li>
+        <li>Понимай каждую строку</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Feature Workflow -->
+<div class="slide">
+  <h2>Workflow: новая фича</h2>
+  <div class="flow">
+    <div class="flow-step" style="border-color: var(--purple);"><span class="purple">Спецификация</span><br><span class="dim" style="font-size: 0.8em;">Plan Mode</span></div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step" style="border-color: var(--blue);"><span style="color: var(--blue);">Декомпозиция</span><br><span class="dim" style="font-size: 0.8em;">Ctrl+T / todos</span></div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step" style="border-color: var(--green);"><span class="highlight">Реализация</span><br><span class="dim" style="font-size: 0.8em;">по шагам</span></div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step" style="border-color: var(--orange);"><span class="accent">Тесты</span><br><span class="dim" style="font-size: 0.8em;">интеграционные</span></div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step" style="border-color: var(--red);"><span style="color: var(--red);">Review</span><br><span class="dim" style="font-size: 0.8em;">git diff</span></div>
+  </div>
+  <div style="margin-top: 1.5rem; max-width: 800px;">
+    <p>Каждый шаг реализации:</p>
+    <div class="flow" style="margin-top: 0.5rem;">
+      <div class="flow-step">Реализуй подзадачу</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><code>git diff</code></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><code>git commit</code></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><code>/clear</code></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">Следующая</div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Debug Workflow -->
+<div class="slide">
+  <h2>Workflow: Debug</h2>
+  <div class="columns">
+    <div class="card">
+      <h3 style="color: var(--green);">Быстрый (1 промпт)</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+Ошибка: POST /api/orders &rarr; 500
+
+Error log:
+<span class="string">[paste error trace]</span>
+
+Последние изменения:
+<span class="prompt">git log --oneline -5</span>
+
+Воспроизведение:
+<span class="prompt">curl -X POST localhost:3000/api/orders</span>
+
+Найди причину и предложи фикс.
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--orange);">Глубокий (multi-step)</h3>
+      <div class="flow" style="justify-content: flex-start; flex-direction: column; align-items: flex-start;">
+        <div class="flow-step" style="width: 100%; text-align: left;"><span class="highlight">1.</span> Сбор информации<br><span class="dim" style="font-size: 0.8em;">"Исследуй, пока не фикси"</span></div>
+        <div class="flow-step" style="width: 100%; text-align: left; margin-top: 0.3rem;"><span class="highlight">2.</span> Анализ root cause<br><span class="dim" style="font-size: 0.8em;">"Ранжируй по impact"</span></div>
+        <div class="flow-step" style="width: 100%; text-align: left; margin-top: 0.3rem;"><span class="highlight">3.</span> Исправление<br><span class="dim" style="font-size: 0.8em;">"Фикс N1 + тест"</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Code Review -->
+<div class="slide">
+  <h2>Workflow: Code Review</h2>
+  <div class="columns">
+    <div class="card">
+      <h3>Self-review перед PR</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+Review <span class="prompt">git diff main...HEAD</span>
+
+Checklist:
+<span class="string">[ ]</span> Нет hardcoded значений
+<span class="string">[ ]</span> Error handling для внешних вызовов
+<span class="string">[ ]</span> Нет секретов в коде
+<span class="string">[ ]</span> Тесты: happy path + edge cases
+<span class="string">[ ]</span> Нет breaking changes в API
+<span class="string">[ ]</span> Типы корректны (нет any)
+
+Формат: <span class="keyword">CRITICAL</span> / <span class="string">WARNING</span> / SUGGESTION
+      </div>
+    </div>
+    <div class="card">
+      <h3>Review чужого PR</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+Прочитай PR #123:
+<span class="prompt">gh pr view 123 --json body,diff</span>
+
+Оцени:
+1. Решает ли заявленную проблему?
+2. Баги или edge cases?
+3. Соответствует архитектуре?
+4. Достаточно тестов?
+
+<span class="comment">Напиши review для GitHub.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Golden Rule -->
+<div class="slide">
+  <h2>Золотое правило</h2>
+  <div style="margin: 1.5rem 0;">
+    <div class="code-block" style="font-size: clamp(1rem, 2vw, 1.5rem); text-align: center; max-width: 700px;">
+<span class="prompt">git commit</span> после каждого шага
+<span class="keyword">/clear</span> после каждой подзадачи
+    </div>
+  </div>
+  <div class="columns" style="margin-top: 1rem;">
+    <div class="card">
+      <h3 style="color: var(--green);">Почему commit</h3>
+      <ul>
+        <li>Агент "хорошо начинает, плохо заканчивает"</li>
+        <li>Без коммитов откат невозможен</li>
+        <li>Squash потом</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--green);">Почему /clear</h3>
+      <ul>
+        <li>Контекст деградирует со временем</li>
+        <li>Агент путает файлы, забывает инструкции</li>
+        <li>Заново прочитать &lt; мутный контекст</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Combining Tools -->
+<div class="slide">
+  <h2>Комбинирование инструментов</h2>
+  <div class="code-block" style="max-width: 800px; font-size: clamp(0.85rem, 1.4vw, 1.1rem);">
+<span class="comment">Claude Code</span>                  <span class="dim">-- основной агент</span>
+  <span class="keyword">+</span> <span class="comment">Sub-agents</span>              <span class="dim">-- параллельные специалисты</span>
+    <span class="keyword">├</span> researcher (haiku)     <span class="dim">-- поиск по коду</span>
+    <span class="keyword">├</span> implementer (opus)     <span class="dim">-- реализация</span>
+    <span class="keyword">└</span> reviewer (sonnet)      <span class="dim">-- code review</span>
+  <span class="keyword">+</span> <span class="comment">MCP серверы</span>             <span class="dim">-- внешние инструменты</span>
+    <span class="keyword">├</span> context7               <span class="dim">-- документация</span>
+    <span class="keyword">├</span> claude-mem             <span class="dim">-- persistent memory</span>
+    <span class="keyword">└</span> github                 <span class="dim">-- issues, PRs</span>
+  <span class="keyword">+</span> <span class="comment">Skills</span>                  <span class="dim">-- lazy инструкции</span>
+  <span class="keyword">+</span> <span class="comment">Hooks</span>                   <span class="dim">-- автоматизация</span>
+  </div>
+  <p style="margin-top: 1rem;" class="dim">Hooks не занимают контекст -- они работают детерминистически</p>
+</div>
+
+<!-- Slide 15: Context is King -->
+<div class="slide">
+  <h2>Контекст решает всё</h2>
+  <p style="margin-bottom: 1rem;">Каждый промпт должен содержать три компонента:</p>
+  <div class="columns-3">
+    <div class="card" style="border-color: var(--purple);">
+      <h3 style="color: var(--purple);">WHAT</h3>
+      <p>Что за проект, стек, структура</p>
+      <p class="dim" style="margin-top: 0.5rem; font-size: 0.9em;">Next.js 14, TypeScript, Prisma, Monorepo</p>
+    </div>
+    <div class="card" style="border-color: var(--orange);">
+      <h3>WHY</h3>
+      <p>Зачем нужно изменение, бизнес-задача</p>
+      <p class="dim" style="margin-top: 0.5rem; font-size: 0.9em;">Таблица orders 100k+ записей, нужна пагинация</p>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <h3 style="color: var(--green);">HOW</h3>
+      <p>Как сделать, ограничения, формат</p>
+      <p class="dim" style="margin-top: 0.5rem; font-size: 0.9em;">Cursor-based, по createdAt+id, max 100</p>
+    </div>
+  </div>
+  <p style="margin-top: 1.2rem;"><span class="accent">Правило:</span> если промпт подходит к тысяче других проектов -- он слишком расплывчатый</p>
+</div>
+
+<!-- Slide 16: CLAUDE.md -->
+<div class="slide">
+  <h2>CLAUDE.md</h2>
+  <p style="margin-bottom: 1rem;">"Онбординг" агента в проект. Единственный файл, попадающий в каждую сессию.</p>
+  <div class="columns">
+    <div class="card">
+      <h3>Структура</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+<span class="keyword">## WHAT</span> (стек и структура)
+Next.js 14, TypeScript, Prisma
+Monorepo: apps/web, apps/api
+
+<span class="keyword">## WHY</span> (контекст проекта)
+SaaS для управления заказами
+
+<span class="keyword">## HOW</span> (как работать)
+<span class="prompt">pnpm dev</span> / <span class="prompt">pnpm test</span>
+Ветки: feature/TICKET-123-desc
+Коммиты: conventional commits
+      </div>
+    </div>
+    <div class="card">
+      <h3>Progressive Disclosure</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+CLAUDE.md           <span class="comment"># 60-100 строк</span>
+agent_docs/
+  <span class="keyword">├</span> architecture.md <span class="comment"># архитектура</span>
+  <span class="keyword">├</span> testing.md     <span class="comment"># тесты</span>
+  <span class="keyword">└</span> api.md         <span class="comment"># конвенции API</span>
+      </div>
+      <p style="margin-top: 0.5rem; font-size: 0.9em;"><span class="accent">Max 150-200 инструкций.</span> Остальное -- в agent_docs/ и skills.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Bad vs Good Prompts -->
+<div class="slide">
+  <h2>Плохой vs хороший промпт</h2>
+  <div class="vs">
+    <div class="card bad">
+      <h3>Плохо</h3>
+      <div class="code-block" style="font-size: 0.8rem; border-color: var(--red);">
+Почему падает тест?
+      </div>
+      <div class="code-block" style="font-size: 0.8rem; border-color: var(--red); margin-top: 0.5rem;">
+Отрефактори этот файл
+      </div>
+      <div class="code-block" style="font-size: 0.8rem; border-color: var(--red); margin-top: 0.5rem;">
+Добавь пагинацию
+      </div>
+    </div>
+    <div class="vs-divider">vs</div>
+    <div class="card good">
+      <h3>Хорошо</h3>
+      <div class="code-block" style="font-size: 0.8rem; border-color: var(--green);">
+Тест OrderService.createOrder
+в tests/order.test.ts
+TypeError: Cannot read 'id'
+<span class="comment">Пройди по коду line-by-line...</span>
+      </div>
+      <div class="code-block" style="font-size: 0.8rem; border-color: var(--green); margin-top: 0.5rem;">
+Отрефактори orders.ts:
+<span class="comment">1. Убрать дубли (23-45, 67-89)</span>
+<span class="comment">2. Вынести в OrderService</span>
+<span class="comment">3. Error handling</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Context Management -->
+<div class="slide">
+  <h2>Управление контекстом</h2>
+  <p style="margin-bottom: 1rem;">Context window -- рабочая память агента. Чем больше мусора, тем хуже качество.</p>
+  <ul style="max-width: 850px;">
+    <li><code>/clear</code> <span class="accent">после каждой подзадачи</span> -- дешевле прочитать заново, чем работать с мутным контекстом</li>
+    <li><span class="accent">MCP -- скрытый потребитель:</span> описания инструментов занимают до 50% контекста ещё до начала работы</li>
+    <li><span class="accent">Sub-agents для фильтрации:</span> вместо 200 строк test output делегируй sub-agent, который вернёт только failures</li>
+    <li><span class="accent">Skills вместо CLAUDE.md:</span> загружаются по требованию, не раздувают постоянный контекст</li>
+  </ul>
+</div>
+
+<!-- Slide 19: Few-shot & Iteration -->
+<div class="slide">
+  <h2>Few-shot и итеративность</h2>
+  <div class="columns">
+    <div class="card">
+      <h3>Показывай примеры</h3>
+      <div class="code-block" style="font-size: 0.8rem;">
+Преобразуй API endpoints в интерфейсы:
+
+<span class="comment">Пример:</span>
+<span class="string">GET /users/:id</span> &rarr;
+  <span class="keyword">interface</span> GetUserParams { id: string }
+
+<span class="string">POST /users body: {name, email}</span> &rarr;
+  <span class="keyword">interface</span> CreateUserBody {
+    name: string; email: string
+  }
+
+<span class="comment">Теперь для:</span>
+GET /orders/:id/items?page=N&limit=N
+      </div>
+    </div>
+    <div class="card">
+      <h3>Итерируй, не надейся на one-shot</h3>
+      <ul>
+        <li>Получил результат</li>
+        <li>Определил, что не так</li>
+        <li>Уточнил <span class="accent">конкретно</span>:<br>"Используй async/await вместо callbacks"</li>
+        <li>Контекст мутный? <code>/clear</code> и заново</li>
+      </ul>
+      <p style="margin-top: 1rem; font-size: 0.9em;" class="dim">Промптинг -- диалог, а не команда</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Models Landscape -->
+<div class="slide">
+  <h2>Ландшафт моделей 2026</h2>
+  <table>
+    <tr><th>Модель</th><th>Input</th><th>Output</th><th>Context</th><th>Фишка</th></tr>
+    <tr><td><span class="purple">Claude Opus 4.6</span></td><td>$5</td><td>$25</td><td>200K</td><td>SWE-bench 80.8%</td></tr>
+    <tr><td><span class="purple">Claude Sonnet 4.6</span></td><td>$3</td><td>$15</td><td>200K</td><td>Best price/quality</td></tr>
+    <tr><td><span class="purple">Claude Haiku 4.5</span></td><td>$1</td><td>$5</td><td>200K</td><td>Fast & cheap</td></tr>
+    <tr><td>GPT-4.1</td><td>$2</td><td>$8</td><td>1M</td><td>Large context</td></tr>
+    <tr><td>GPT-5</td><td>$1.25</td><td>$10</td><td>--</td><td>OpenAI flagship</td></tr>
+    <tr><td>Gemini 2.5 Flash</td><td>$0.15</td><td>$0.60</td><td>1M</td><td>Ultra cheap</td></tr>
+    <tr><td>DeepSeek V3.2</td><td>$0.14</td><td>$0.28</td><td>--</td><td>Best budget</td></tr>
+  </table>
+  <p class="dim" style="margin-top: 0.8rem; font-size: 0.85em;">Цены за 1M tokens, февраль 2026</p>
+</div>
+
+<!-- Slide 21: Decision Matrix -->
+<div class="slide">
+  <h2>Матрица выбора модели</h2>
+  <table>
+    <tr><th>Задача</th><th>Модель</th><th>Почему</th></tr>
+    <tr><td>Архитектурный рефакторинг</td><td><span class="purple">Opus 4.6</span></td><td>Глубокое понимание, большой контекст</td></tr>
+    <tr><td>Повседневный кодинг</td><td><span class="purple">Sonnet 4.6</span></td><td>Лучшее price/quality</td></tr>
+    <tr><td>Автодополнение в IDE</td><td><span class="purple">Haiku 4.5</span></td><td>Быстро и дешево</td></tr>
+    <tr><td>Сложный алгоритм</td><td>O3 / <span class="purple">Opus</span></td><td>Reasoning capabilities</td></tr>
+    <tr><td>Массовая обработка</td><td>DeepSeek V3.2</td><td>Ультра-дешево ($0.28/1M)</td></tr>
+    <tr><td>Code review</td><td><span class="purple">Sonnet 4.6</span></td><td>Находит баги, предлагает улучшения</td></tr>
+    <tr><td>Дебаг сложного бага</td><td><span class="purple">Opus 4.6</span></td><td>Глубокий анализ</td></tr>
+  </table>
+</div>
+
+<!-- Slide 22: AI Coding Tools -->
+<div class="slide">
+  <h2>AI Coding Tools</h2>
+  <div class="columns-3">
+    <div class="card">
+      <h3 style="color: var(--blue);">Cursor</h3>
+      <p>AI внутри IDE (форк VS Code)</p>
+      <p><span class="accent">$20/мес</span> Pro</p>
+      <ul>
+        <li>Привычный интерфейс</li>
+        <li>Agent Mode + Composer</li>
+        <li>Inline diff</li>
+        <li>1M+ пользователей</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: var(--purple);">
+      <h3 style="color: var(--purple);">Claude Code</h3>
+      <p>AI агент в терминале</p>
+      <p><span class="accent">$100-200/мес</span> Max</p>
+      <ul>
+        <li>Любой редактор</li>
+        <li>SWE-bench лидер</li>
+        <li>Sub-agents, skills, hooks</li>
+        <li>Самый глубокий контекст</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--green);">Windsurf</h3>
+      <p>AI-native IDE, Cascade</p>
+      <p><span class="accent">$15/мес</span> Pro</p>
+      <ul>
+        <li>Самый дешевый</li>
+        <li>Arena Mode</li>
+        <li>Flow-подход</li>
+        <li>Молодая экосистема</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top: 1rem;" class="dim">Combo: Cursor для быстрых правок + Claude Code для сложных задач</p>
+</div>
+
+<!-- Slide 23: Anti-patterns -->
+<div class="slide">
+  <h2>Топ anti-patterns</h2>
+  <div class="columns">
+    <div>
+      <ul class="antipattern-list">
+        <li><span class="accent">"Сделай всё сам"</span> -- агент деградирует на длинных сессиях, первые файлы ОК, последние -- мусор</li>
+        <li><span class="accent">Без коммитов</span> -- час работы без единого коммита, потом откат невозможен</li>
+        <li><span class="accent">Без /clear</span> -- одна сессия на весь день, контекст деградирует</li>
+        <li><span class="accent">Раздутый CLAUDE.md</span> -- 500 строк инструкций, Claude начинает игнорировать</li>
+        <li><span class="accent">Copy-paste кода</span> -- 200 строк в промпт вместо "прочитай файл X"</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="antipattern-list">
+        <li><span class="accent">Все MCP включены</span> -- 10 серверов съедают 50% контекста до начала работы</li>
+        <li><span class="accent">Без Plan Mode</span> -- сразу код, потом переделывать дороже</li>
+        <li><span class="accent">"Агент как Google"</span> -- тратишь контекст на общие знания вместо задач</li>
+        <li><span class="accent">Не проверять output</span> -- LLM галлюцинируют, особенно с деградацией контекста</li>
+        <li><span class="accent">Антропоморфизм</span> -- "Ты гениальный эксперт..." бесполезный fluff</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 24: Checklist -->
+<div class="slide">
+  <h2>Чеклист для старта</h2>
+  <ul class="checklist">
+    <li>Установи Claude Code: <code>npm install -g @anthropic-ai/claude-code</code></li>
+    <li>Создай <code>CLAUDE.md</code> в проекте: WHAT / WHY / HOW (60-100 строк)</li>
+    <li>Подключи <code>context7</code> для актуальной документации</li>
+    <li>Подключи <code>claude-mem</code> для persistent memory</li>
+    <li>Освой три команды: <code>/clear</code>, <code>/compact</code>, <code>git commit</code></li>
+    <li>Начни с Agent-First режима для типовых задач</li>
+    <li>Коммить после каждого шага, <code>/clear</code> после каждой подзадачи</li>
+    <li>Создай первый sub-agent: test-runner на Sonnet</li>
+    <li>Попробуй skills для повторяющихся операций</li>
+    <li>Через неделю -- ревью своего CLAUDE.md, убери лишнее</li>
+  </ul>
+</div>
+
+<!-- Slide 25: Q&A -->
+<div class="slide">
+  <h1>Q&A</h1>
+  <p class="subtitle" style="margin-top: 1rem;">Вопросы и обсуждение</p>
+  <div style="margin-top: 3rem;">
+    <p class="dim">Ключевые ссылки:</p>
+    <p style="margin-top: 0.5rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem);">
+      <code>code.claude.com/docs</code> &middot;
+      <code>github.com/upstash/context7</code> &middot;
+      <code>docs.claude-mem.ai</code>
+    </p>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  function show(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    nav.textContent = (current + 1) + ' / ' + slides.length;
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  }
+
+  function next() { show(current + 1); }
+  function prev() { show(current - 1); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.clientX > window.innerWidth / 2) next();
+    else prev();
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  });
+
+  show(0);
+})();
+</script>
+
+</body>
+</html>
