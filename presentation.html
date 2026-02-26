@@ -389,6 +389,8 @@
     <div class="schema-box">GSD</div>
     <div class="schema-arrow">+</div>
     <div class="schema-box">Context7</div>
+    <div class="schema-arrow">+</div>
+    <div class="schema-box">CCM</div>
   </div>
   <div style="margin-top: 2rem; max-width: 800px;">
     <ul>
@@ -397,6 +399,8 @@
       <li><span class="highlight">claude-mem</span> -- persistent memory между сессиями</li>
       <li><span class="highlight">GSD</span> -- структурированный project management</li>
       <li><span class="highlight">Context7</span> -- актуальная документация библиотек</li>
+      <li><span class="highlight">CCM</span> -- мониторинг токенов и стоимости</li>
+      <li><span class="highlight">Ghostty</span> -- GPU-терминал вместо IDE</li>
     </ul>
   </div>
 </div>
@@ -549,7 +553,65 @@
   </div>
 </div>
 
-<!-- Slide 9: Three Modes -->
+<!-- Slide 9: Рабочее окружение -->
+<div class="slide">
+  <h2>Рабочее окружение</h2>
+  <div class="columns">
+    <div class="card">
+      <h3 style="color: var(--green);">Ghostty</h3>
+      <p>GPU-accelerated терминал вместо IDE</p>
+      <ul>
+        <li><span class="highlight">~500MB</span> vs ~8GB у VS Code</li>
+        <li>GPU-рендеринг текста -- без лагов на больших логах</li>
+        <li>Паттерн сплитов: Claude Code + Neovim + monitor</li>
+        <li>macOS / Linux, открытый исходный код</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--orange);">Spokenly</h3>
+      <p>Голосовая диктовка промптов</p>
+      <ul>
+        <li><span class="accent">Agent Mode</span> -- автоматическая вставка в терминал</li>
+        <li>Deeplinks: <code>spokenly://start</code></li>
+        <li>Русский и английский распознавание</li>
+        <li>Длинные промпты голосом быстрее, чем печатать</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Мониторинг расхода -->
+<div class="slide">
+  <h2>Мониторинг расхода</h2>
+  <div class="columns">
+    <div class="card">
+      <h3 style="color: var(--purple);">CCM</h3>
+      <p>Claude Code Usage Monitor -- real-time dashboard</p>
+      <ul>
+        <li>Текущий расход токенов и долларов</li>
+        <li>ML-предсказание момента лимита</li>
+        <li>История по сессиям и проектам</li>
+      </ul>
+      <div class="code-block" style="font-size: 0.8rem; margin-top: 0.5rem;">
+<span class="prompt">claude-monitor --plan pro</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color: var(--blue);">ccstatusline</h3>
+      <p>Status bar прямо в Claude Code</p>
+      <ul>
+        <li>Текущая модель и токены</li>
+        <li>Процент использованного контекста</li>
+        <li>Стоимость текущей сессии</li>
+      </ul>
+      <div class="code-block" style="font-size: 0.8rem; margin-top: 0.5rem;">
+<span class="prompt">bunx ccstatusline@latest</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Three Modes -->
 <div class="slide">
   <h2>Три режима работы</h2>
   <div class="columns-3">
@@ -982,6 +1044,7 @@ GET /orders/:id/items?page=N&limit=N
     <li>Коммить после каждого шага, <code>/clear</code> после каждой подзадачи</li>
     <li>Создай первый sub-agent: test-runner на Sonnet</li>
     <li>Попробуй skills для повторяющихся операций</li>
+    <li>Настрой мониторинг: <code>ccstatusline</code> для status bar, <code>CCM</code> для dashboard</li>
     <li>Через неделю -- ревью своего CLAUDE.md, убери лишнее</li>
   </ul>
 </div>
@@ -995,7 +1058,9 @@ GET /orders/:id/items?page=N&limit=N
     <p style="margin-top: 0.5rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem);">
       <code>code.claude.com/docs</code> &middot;
       <code>github.com/upstash/context7</code> &middot;
-      <code>docs.claude-mem.ai</code>
+      <code>docs.claude-mem.ai</code> &middot;
+      <code>ghostty.org</code> &middot;
+      <code>github.com/nicobailon/ccm</code>
     </p>
   </div>
 </div>

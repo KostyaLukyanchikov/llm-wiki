@@ -164,4 +164,4 @@ claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp
 
 ---
 
-Связанные: [[claude-mem]], [[Context7]], [[GSD (Get Shit Done)]], [[agent-browser]]
+Связанные: [[claude-mem]], [[Context7]], [[GSD (Get Shit Done)]], [[agent-browser]], [[CCM (Claude Code Usage Monitor)]], [[ccstatusline]], [[Spokenly]], [[Ghostty]]

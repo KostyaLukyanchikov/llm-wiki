@@ -28,6 +28,10 @@
 | [[GSD (Get Shit Done)]] | Структурированный project management workflow | [GitHub](https://github.com/gsd-build/get-shit-done) |
 | [[agent-browser]] | Browser automation для AI-агентов | [GitHub](https://github.com/vercel-labs/agent-browser) |
 | [[MCP серверы -- каталог]] | Справочник полезных MCP серверов по категориям | [mcpservers.org](https://mcpservers.org) |
+| [[CCM (Claude Code Usage Monitor)]] | Real-time dashboard: токены, стоимость, ML-предсказания лимита | [GitHub](https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor) |
+| [[ccstatusline]] | Status bar для Claude Code: модель, токены, контекст | [GitHub](https://github.com/sirmalloc/ccstatusline) |
+| [[Ghostty]] | GPU-ускоренный терминал с минимальным потреблением памяти | [GitHub](https://github.com/ghostty-org/ghostty) |
+| [[Spokenly]] | AI-диктовка голосом в любое приложение macOS | [docs](https://spokenly.app/docs) |
 
 ---
 
@@ -49,12 +53,14 @@
 
 ### Разработка
 ```
-Claude Code (Opus/Sonnet) + context7 + claude-mem + GSD
+Claude Code (Opus/Sonnet) + context7 + claude-mem + GSD + CCM + ccstatusline
 ```
 - [[Claude Code]] как основной агент
 - [[Context7]] для актуальной документации
 - [[claude-mem]] для памяти между сессиями
 - [[GSD (Get Shit Done)]] для структурированных проектов
+- [[CCM (Claude Code Usage Monitor)]] для отслеживания расхода токенов
+- [[ccstatusline]] для status bar с моделью, токенами и контекстом
 
 ### Дебаг
 ```
