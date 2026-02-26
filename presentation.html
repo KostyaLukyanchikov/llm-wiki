@@ -346,6 +346,30 @@
     color: var(--red);
   }
 
+  .media-preview {
+    max-width: 100%;
+    max-height: 45vh;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    object-fit: contain;
+  }
+
+  .media-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8em;
+    overflow: hidden;
+  }
+
+  img.media-preview {
+    background: var(--bg-card);
+    min-height: 60px;
+  }
+
   @media (max-width: 768px) {
     .columns, .columns-3, .vs { grid-template-columns: 1fr; }
     .slide { padding: 3vh 5vw; }
@@ -419,14 +443,8 @@
         <li>200K контекст (1M в beta)</li>
       </ul>
     </div>
-    <div class="card">
-      <h3>4 системы расширения</h3>
-      <ul>
-        <li><span class="accent">Sub-agents</span> -- параллельные специалисты</li>
-        <li><span class="accent">Skills</span> -- lazy-loaded инструкции</li>
-        <li><span class="accent">Hooks</span> -- автоматизация событий</li>
-        <li><span class="accent">MCP</span> -- внешние инструменты</li>
-      </ul>
+    <div class="media-card">
+      <img class="media-preview" src="https://github.com/anthropics/claude-code/raw/main/demo.gif" alt="Claude Code demo -- работа агента в терминале">
     </div>
   </div>
 </div>
@@ -443,7 +461,16 @@
     <tr><td><span class="highlight">Database MCP</span></td><td>Прямые запросы к БД</td><td>При дебаге данных</td></tr>
     <tr><td><span class="highlight">Browser MCP</span></td><td>Визуальное тестирование</td><td>При работе с UI</td></tr>
   </table>
-  <p class="dim" style="margin-top: 1rem; font-size: 0.9em;">Каждый MCP съедает контекст -- держи активными только нужные</p>
+  <div class="schema" style="margin-top: 1.5rem;">
+    <div class="schema-box">Tool / Data</div>
+    <div class="schema-arrow">&larr;</div>
+    <div class="schema-box main">MCP Server</div>
+    <div class="schema-arrow">&larr; JSON-RPC &rarr;</div>
+    <div class="schema-box main">MCP Client</div>
+    <div class="schema-arrow">&rarr;</div>
+    <div class="schema-box">LLM Agent</div>
+  </div>
+  <p class="dim" style="margin-top: 0.5rem; font-size: 0.9em;">Каждый MCP съедает контекст -- держи активными только нужные</p>
 </div>
 
 <!-- Slide 6: Sub-agents -->
@@ -531,6 +558,7 @@
         <li>Авто-сохранение решений</li>
         <li>MCP-интеграция</li>
       </ul>
+      <img class="media-preview" style="max-height: 45vh; margin-top: 0.5rem; width: 100%;" src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/cm-preview.gif" alt="claude-mem preview">
     </div>
     <div class="card">
       <h3 style="color: var(--blue);">Context7</h3>
@@ -540,6 +568,7 @@
         <li>Подключение через MCP</li>
         <li>Нет галлюцинаций API</li>
       </ul>
+      <img class="media-preview" style="max-height: 45vh; margin-top: 0.5rem; width: 100%;" src="assets/context7-screenshot.png" alt="Context7 -- библиотеки и документация">
     </div>
     <div class="card">
       <h3 style="color: var(--green);">GSD</h3>
@@ -549,6 +578,7 @@
         <li>Roadmap и фазы</li>
         <li>Атомарные коммиты</li>
       </ul>
+      <img class="media-preview" style="max-height: 45vh; margin-top: 0.5rem; width: 100%;" src="https://raw.githubusercontent.com/gsd-build/get-shit-done/main/assets/terminal.svg" alt="GSD terminal">
     </div>
   </div>
 </div>
@@ -566,6 +596,7 @@
         <li>Паттерн сплитов: Claude Code + Neovim + monitor</li>
         <li>macOS / Linux, открытый исходный код</li>
       </ul>
+      <img class="media-preview" style="max-height: 33vh; margin-top: 0.5rem; width: 100%;" src="https://regmedia.co.uk/2025/01/07/ghostty-101.jpg" alt="Ghostty terminal running on Linux">
     </div>
     <div class="card">
       <h3 style="color: var(--orange);">Spokenly</h3>
@@ -576,6 +607,7 @@
         <li>Русский и английский распознавание</li>
         <li>Длинные промпты голосом быстрее, чем печатать</li>
       </ul>
+      <img class="media-preview" style="max-height: 33vh; margin-top: 0.5rem; width: 100%;" src="assets/spokenly-screenshot.png" alt="Spokenly -- голосовая диктовка">
     </div>
   </div>
 </div>
@@ -592,9 +624,7 @@
         <li>ML-предсказание момента лимита</li>
         <li>История по сессиям и проектам</li>
       </ul>
-      <div class="code-block" style="font-size: 0.8rem; margin-top: 0.5rem;">
-<span class="prompt">claude-monitor --plan pro</span>
-      </div>
+      <img class="media-preview" style="max-height: 33vh; margin-top: 0.5rem; width: 100%;" src="https://raw.githubusercontent.com/Maciek-roboblog/Claude-Code-Usage-Monitor/main/doc/scnew.png" alt="CCM dashboard">
     </div>
     <div class="card">
       <h3 style="color: var(--blue);">ccstatusline</h3>
@@ -604,9 +634,7 @@
         <li>Процент использованного контекста</li>
         <li>Стоимость текущей сессии</li>
       </ul>
-      <div class="code-block" style="font-size: 0.8rem; margin-top: 0.5rem;">
-<span class="prompt">bunx ccstatusline@latest</span>
-      </div>
+      <img class="media-preview" style="max-height: 33vh; margin-top: 0.5rem; width: 100%;" src="https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif" alt="ccstatusline demo">
     </div>
   </div>
 </div>
