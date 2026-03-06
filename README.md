@@ -13,6 +13,8 @@
 | [[Prompt Engineering для разработки]] | Принципы промптинга, CLAUDE.md, контекст | [best practices](https://code.claude.com/docs/en/best-practices) / [Habr: контекст](https://habr.com/ru/articles/971772/) |
 | [[Рабочие воркфлоу с LLM-агентами]] | Workflow для фич, дебага, review, anti-patterns | [Habr: субагенты](https://habr.com/ru/articles/946748/) / [docs](https://code.claude.com/docs/ru/sub-agents) |
 | [[Сравнение LLM моделей и цены (2026)]] | Claude vs GPT vs Gemini vs DeepSeek, матрица выбора | [Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing) / [OpenAI pricing](https://openai.com/api/pricing/) |
+| [[Spec-Driven Development с LLM-агентами]] | TDD-first playbook: тесты как спецификация, post-validation, auto-PR | [New Stack](https://thenewstack.io/claude-code-and-the-art-of-test-driven-development/) |
+| [[CLAUDE.md шаблон -- Spec-Driven]] | Готовый шаблон CLAUDE.md + hooks + agents для TDD-first workflow | -- |
 
 ---
 

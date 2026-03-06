@@ -89,4 +89,4 @@ Installer спросит:
 
 ---
 
-Связанные: [[Claude Code]], [[Рабочие воркфлоу с LLM-агентами]], [[Superpowers]]
+Связанные: [[Claude Code]], [[Рабочие воркфлоу с LLM-агентами]], [[Superpowers]], [[Spec-Driven Development с LLM-агентами]]
