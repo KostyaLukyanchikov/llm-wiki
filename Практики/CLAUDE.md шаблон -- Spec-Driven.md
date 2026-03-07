@@ -4,6 +4,8 @@
 
 Назад: [[README]] | Папка: `Практики/`
 
+> **Обновлённая версия:** [[CLAUDE.md шаблон -- SAD]] -- шаблон для Supervised Agentic Development с enhanced slash commands и cross-cutting rules.
+
 ---
 
 ## Что в комплекте

@@ -15,6 +15,8 @@
 | [[Сравнение LLM моделей и цены (2026)]] | Claude vs GPT vs Gemini vs DeepSeek, матрица выбора | [Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing) / [OpenAI pricing](https://openai.com/api/pricing/) |
 | [[Spec-Driven Development с LLM-агентами]] | TDD-first playbook: тесты как спецификация, post-validation, auto-PR | [New Stack](https://thenewstack.io/claude-code-and-the-art-of-test-driven-development/) |
 | [[CLAUDE.md шаблон -- Spec-Driven]] | Готовый шаблон CLAUDE.md + hooks + agents для TDD-first workflow | -- |
+| [[Supervised Agentic Development]] | Unified framework: SDD + Superpowers + GSD, 10-step TDD с cross-cutting rules | -- |
+| [[CLAUDE.md шаблон -- SAD]] | Готовый шаблон CLAUDE.md + 6 slash commands для SAD workflow | -- |
 
 ---
 
@@ -34,6 +36,7 @@
 | [[ccstatusline]] | Status bar для Claude Code: модель, токены, контекст | [GitHub](https://github.com/sirmalloc/ccstatusline) |
 | [[Ghostty]] | GPU-ускоренный терминал с минимальным потреблением памяти | [GitHub](https://github.com/ghostty-org/ghostty) |
 | [[Spokenly]] | AI-диктовка голосом в любое приложение macOS | [docs](https://spokenly.app/docs) |
+| [[Superpowers]] | Composable skills framework для structured coding workflow | [GitHub](https://github.com/obra/superpowers) |
 
 ---
 
@@ -43,7 +46,6 @@
 
 | Инструмент | Приоритет | Что делает | Источник |
 |---|---|---|---|
-| [[Superpowers]] | Высокий | Agentic skills framework | [GitHub](https://github.com/obra/superpowers) |
 | [[Awesome Claude Code]] | Высокий | Каталог ресурсов экосистемы | [GitHub](https://github.com/hesreallyhim/awesome-claude-code) |
 | [[llms.txt]] | Средний | Стандарт AI-friendly контента | [Habr](https://habr.com/ru/articles/974882/) / [llmstxt.org](https://llmstxt.org) |
 | [[CodeWiki]] | Средний | Автодокументация codebase | [Habr](https://habr.com/ru/articles/1002424/) |
@@ -79,9 +81,10 @@ Claude Code + gh CLI + sub-agents (reviewer)
 
 ### Проектная работа
 ```
-GSD + Claude Code + MCP (Notion/Slack)
+GSD + SAD + Claude Code + MCP (Notion/Slack)
 ```
 - [[GSD (Get Shit Done)]] для полного цикла: plan -> execute -> verify
+- [[Supervised Agentic Development]] для structured 10-step TDD workflow
 - [[MCP серверы -- каталог]] для интеграций
 
 ---

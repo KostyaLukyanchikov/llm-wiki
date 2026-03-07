@@ -4,6 +4,8 @@
 
 Назад: [[README]] | Папка: `Практики/`
 
+> **Эволюция:** Этот подход развился в [[Supervised Agentic Development]] -- unified framework на базе SDD + [[Superpowers]] + [[GSD (Get Shit Done)|GSD]]. Данная страница сохранена как reference.
+
 ---
 
 ## Проблема: почему "все тесты вперёд" не работает
