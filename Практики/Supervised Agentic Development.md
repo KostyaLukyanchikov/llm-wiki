@@ -116,6 +116,71 @@ Checkpoint на каждом из 10 шагов. Агент предлагает
 
 ---
 
+## Git branching workflow
+
+Трёхуровневая схема веток для интеграции SAD с git:
+
+```
+main (protected, no direct commits)
+  └── gsd/v1.0-auth-system              (milestone branch)
+        ├── gsd/phase-01-user-model      (phase branch, short-lived)
+        ├── gsd/phase-02-jwt-tokens      (phase branch)
+        └── gsd/phase-03-oauth           (phase branch)
+```
+
+### Жизненный цикл milestone branch
+
+1. Создаётся из `main` при `/gsd:new-milestone`
+2. Открывается **draft PR** в main для visibility
+3. Фазы мержатся сюда по мере завершения
+4. После последней фазы -- PR переводится в Ready, проходит CI + ревью
+5. **Squash merge** в main, ветка удаляется
+
+### Жизненный цикл phase branch
+
+1. Создаётся из milestone branch при шаге 1 (`/gsd:discuss-phase`)
+2. Все 10 шагов SAD -- коммиты на phase branch
+3. После шага 10 (APPROVED) -- **merge --no-ff** в milestone branch
+4. Ветка удаляется, `/clear`
+
+### Merge-стратегии
+
+| Уровень | Стратегия | Почему |
+|---|---|---|
+| Phase -> Milestone | `--no-ff` (merge commit) | Сохраняет историю фазы как логическую группу, легко revert целой фазы |
+| Milestone -> Main | Squash merge (через PR) | Чистая история main, один коммит на milestone |
+
+### Коммиты на phase branch
+
+| Шаг | Тип коммита | Пример |
+|---|---|---|
+| 1. Design | `docs(scope)` | `docs(auth): phase 01 design` |
+| 2-4. Test spec/plan/review | `docs(scope)` | `docs(auth): phase 01 test spec` |
+| 5. Execute tests RED | `test(scope)` | `test(auth): add failing tests for user-model` |
+| 6. Review tests | `docs(scope)` + fixup | `docs(auth): phase 01 test review` |
+| 7. Plan impl | `docs(scope)` | `docs(auth): phase 01 impl plan` |
+| 8. Execute impl | `feat/fix(scope)` | `feat(auth): implement user model` |
+| 9-10. Verify + review | `docs(scope)` + fixup | `docs(auth): phase 01 verification` |
+
+### CI интеграция
+
+| Триггер | Что запускается | Цель |
+|---|---|---|
+| Push на `gsd/phase-*` | Lint + unit tests | Быстрый фидбек при разработке |
+| Push на `gsd/*` (не phase) | Full test suite | Интеграционная проверка после merge фазы |
+| PR в `main` | Full suite + E2E | Release gate |
+
+### Edge cases
+
+- **Phase fails review**: остаётся на phase branch, итерации до APPROVED
+- **Hotfix в main**: `hotfix/*` branch -> PR в main, потом rebase milestone branch
+- **Параллельные фазы**: мержить в milestone branch последовательно по номерам
+- **Quick tasks** (`/gsd:quick`): коммит прямо в milestone branch (без отдельной ветки)
+
+Полная инструкция для агента -- в [[CLAUDE.md шаблон -- SAD#Git branching]].
+
+---
+
 ## Quick task workflow
 
 Для `/gsd:quick` -- сокращённый протокол без отдельных артефактов:

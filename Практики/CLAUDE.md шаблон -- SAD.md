@@ -158,6 +158,54 @@ STOP. Discuss with human. Do NOT attempt Fix #4.
 - Format: `{feat|fix|test|refactor}({scope}): description`
 - Commit after each passing batch of tests
 - `/clear` after each commit
+- See "Git branching" below for branch-specific commit conventions
+
+## Git branching
+
+### Branch structure
+```
+main (protected, no direct commits)
+  └── gsd/{milestone}-{slug}           (milestone branch)
+        └── gsd/phase-{NN}-{slug}      (phase branch, short-lived)
+```
+
+### Phase branch lifecycle
+1. Create from milestone branch at step 1: `git checkout -b gsd/phase-{NN}-{slug}`
+2. All 10 SAD steps = commits on phase branch
+3. After step 10 APPROVED:
+   ```bash
+   git checkout gsd/{milestone}-{slug}
+   git merge --no-ff gsd/phase-{NN}-{slug} -m "merge: phase {NN} {slug} (APPROVED)"
+   git branch -d gsd/phase-{NN}-{slug}
+   ```
+4. `/clear` and start next phase
+
+### Milestone branch lifecycle
+1. Create from main at `/gsd:new-milestone`: `git checkout -b gsd/{milestone}-{slug}`
+2. Open **draft PR** into main for visibility
+3. Phase branches merge here via `--no-ff`
+4. After last phase: PR -> Ready -> CI + review -> **squash merge** into main
+5. Delete milestone branch
+
+### Merge strategies
+| Level | Strategy | Why |
+|---|---|---|
+| Phase -> Milestone | `merge --no-ff` | Preserves phase history as logical group, easy revert |
+| Milestone -> Main | Squash merge (via PR) | Clean main history, one commit per milestone |
+
+### Commit types per step
+| Step | Type | Example |
+|---|---|---|
+| 1. Design | `docs(scope)` | `docs(auth): phase 01 design` |
+| 2-4. Test spec/plan/review | `docs(scope)` | `docs(auth): phase 01 test spec` |
+| 5. Execute tests RED | `test(scope)` | `test(auth): add failing tests for user-model` |
+| 6. Review tests | `docs(scope)` | `docs(auth): phase 01 test review` |
+| 7. Plan impl | `docs(scope)` | `docs(auth): phase 01 impl plan` |
+| 8. Execute impl | `feat/fix(scope)` | `feat(auth): implement user model` |
+| 9-10. Verify + review | `docs(scope)` | `docs(auth): phase 01 verification` |
+
+### Quick tasks
+For `/gsd:quick`: commit directly on milestone branch (no separate phase branch).
 
 ## Code style
 {Линтеры, форматтеры, конвенции}
@@ -544,8 +592,15 @@ Phase: $ARGUMENTS
 ## Decision: APPROVED / NEEDS FIXES
 ```
 
-9. If approved, report: "Phase {N} complete. Все 10 шагов пройдены."
-   Suggest next phase: "Запустите `/gsd:discuss-phase {next}` для следующего модуля."
+9. If approved:
+   a. Merge phase branch into milestone branch:
+      ```bash
+      git checkout gsd/{milestone}-{slug}
+      git merge --no-ff gsd/phase-{NN}-{slug} -m "merge: phase {NN} {slug} (APPROVED)"
+      git branch -d gsd/phase-{NN}-{slug}
+      ```
+   b. Report: "Phase {N} complete. Все 10 шагов пройдены. Phase branch merged into milestone."
+   c. Suggest: "Выполните `/clear` и запустите `/gsd:discuss-phase {next}` для следующего модуля."
 ````
 
 ---
