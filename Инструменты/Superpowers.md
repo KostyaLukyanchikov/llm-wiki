@@ -95,7 +95,7 @@ RED-GREEN-REFACTOR цикл с обязательной верификацией
 | Тесты | "Написал код до теста = удали" | Отдельные фазы discuss-tests и plan-tests |
 | Review модель | Субагент-reviewer автоматически | Человек ревьюит артефакты на каждом шаге |
 | Контроль человека | Approve design, затем автономия часами | Checkpoint на каждом из 10 шагов |
-| Обсуждение требований | Brainstorming skill | /gsd:discuss-phase + /project:sdd-discuss-tests |
+| Обсуждение требований | Brainstorming skill | /gsd:discuss-phase + /sdd:discuss-tests |
 | State management | Нет -- stateless skills | .planning/ директория, STATE.md, TODO.md |
 | Отладка | systematic-debugging skill | /gsd:debug с persistent state |
 

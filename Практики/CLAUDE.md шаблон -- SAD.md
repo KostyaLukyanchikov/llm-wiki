@@ -44,7 +44,7 @@ mkdir -p .claude/commands
 # 5. Первый milestone
 /gsd:new-milestone
 /gsd:discuss-phase 1
-# после discuss агент предложит /project:sad-discuss-tests
+# после discuss агент предложит /sad:discuss-tests
 ```
 
 ### Существующий проект с GSD
@@ -67,7 +67,7 @@ git commit -m "feat: add SAD 10-step workflow"
 
 ### Без GSD
 
-Замени GSD-команды (шаги 1, 7, 8, 9) на свой процесс. Кастомные `/project:sad-*` commands не зависят от GSD.
+Замени GSD-команды (шаги 1, 7, 8, 9) на свой процесс. Кастомные `/sad:*` commands не зависят от GSD.
 
 ---
 
@@ -88,15 +88,15 @@ Each GSD phase = one module. Every phase follows a 10-step sequence.
 | # | Step | Command | Artifact | Requires |
 |---|------|---------|----------|----------|
 | 1 | Design & Requirements | /gsd:discuss-phase | CONTEXT.md | -- |
-| 2 | Discuss tests | /project:sad-discuss-tests | TEST-SPEC.md | CONTEXT.md |
-| 3 | Plan tests | /project:sad-plan-tests | TEST-PLAN.md | TEST-SPEC.md |
-| 4 | Review test plan | /project:sad-review-test-plan | TEST-PLAN-REVIEW.md | TEST-PLAN.md |
-| 5 | Execute tests | /project:sad-execute-tests | code (RED) + commit | TEST-PLAN-REVIEW.md |
-| 6 | Review tests | /project:sad-review-tests | TEST-REVIEW.md | test files |
+| 2 | Discuss tests | /sad:discuss-tests | TEST-SPEC.md | CONTEXT.md |
+| 3 | Plan tests | /sad:plan-tests | TEST-PLAN.md | TEST-SPEC.md |
+| 4 | Review test plan | /sad:review-test-plan | TEST-PLAN-REVIEW.md | TEST-PLAN.md |
+| 5 | Execute tests | /sad:execute-tests | code (RED) + commit | TEST-PLAN-REVIEW.md |
+| 6 | Review tests | /sad:review-tests | TEST-REVIEW.md | test files |
 | 7 | Plan implementation | /gsd:plan-phase | XX-PLAN.md | TEST-REVIEW.md |
 | 8 | Execute implementation | /gsd:execute-phase | code (GREEN) + commit | PLAN.md |
 | 9 | Verify | /gsd:verify-work | VERIFICATION.md | implementation |
-| 10 | Review implementation | /project:sad-review-impl | IMPL-REVIEW.md | VERIFICATION.md |
+| 10 | Review implementation | /sad:review-impl | IMPL-REVIEW.md | VERIFICATION.md |
 
 ### HARD-GATE on design
 
@@ -118,7 +118,7 @@ For /gsd:quick, ALWAYS follow these rules:
 3. Verify RED: each test fails for the CORRECT reason (not import/syntax error)
 4. Implement until GREEN
 5. Verification-before-completion: run tests FRESH, read FULL output, check exit code
-6. Run /project:sad-review-impl
+6. Run /sad:review-impl
 No separate artifacts for quick tasks.
 
 ## Cross-cutting rules (apply to ALL steps)
@@ -227,7 +227,7 @@ Phase: $ARGUMENTS
 - {Any unresolved questions to revisit during implementation}
 ```
 
-6. Suggest next step: "Запустите `/project:sad-plan-tests {phase}` для создания плана тестов."
+6. Suggest next step: "Запустите `/sad:plan-tests {phase}` для создания плана тестов."
 ````
 
 ### .claude/commands/sad-plan-tests.md
@@ -298,7 +298,7 @@ describe('{Component}', () => {
 ## Estimated test count: {N}
 ```
 
-5. Suggest next step: "Запустите `/project:sad-review-test-plan {phase}` для ревью плана."
+5. Suggest next step: "Запустите `/sad:review-test-plan {phase}` для ревью плана."
 ````
 
 ### .claude/commands/sad-review-test-plan.md
@@ -358,8 +358,8 @@ Phase: $ARGUMENTS
 ## Decision: APPROVED / APPROVED WITH CHANGES / NEEDS REWORK
 ```
 
-7. If approved, suggest: "Запустите `/project:sad-execute-tests {phase}` для написания тестов."
-   If needs rework, suggest: "Обновите TEST-PLAN.md и запустите `/project:sad-review-test-plan {phase}` повторно."
+7. If approved, suggest: "Запустите `/sad:execute-tests {phase}` для написания тестов."
+   If needs rework, suggest: "Обновите TEST-PLAN.md и запустите `/sad:review-test-plan {phase}` повторно."
 ````
 
 ### .claude/commands/sad-execute-tests.md
@@ -399,7 +399,7 @@ Phase: $ARGUMENTS
    - "Failure reasons verified: {summary}"
    - "Confidence: {X}/10"
 
-7. Suggest next step: "Запустите `/project:sad-review-tests {phase}` для ревью кода тестов."
+7. Suggest next step: "Запустите `/sad:review-tests {phase}` для ревью кода тестов."
 ````
 
 ### .claude/commands/sad-review-tests.md

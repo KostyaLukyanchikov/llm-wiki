@@ -38,15 +38,15 @@
 | # | Шаг | Команда | Артефакт | Требует |
 |---|------|---------|----------|---------|
 | 1 | Discuss requirements | `/gsd:discuss-phase` | `CONTEXT.md` | -- |
-| 2 | Discuss tests | `/project:sdd-discuss-tests` | `TEST-SPEC.md` | CONTEXT.md |
-| 3 | Plan tests | `/project:sdd-plan-tests` | `TEST-PLAN.md` | TEST-SPEC.md |
-| 4 | Review test plan | `/project:sdd-review-test-plan` | `TEST-PLAN-REVIEW.md` | TEST-PLAN.md |
-| 5 | Execute tests | `/project:sdd-execute-tests` | код (RED) + коммит | TEST-PLAN-REVIEW.md |
-| 6 | Review tests | `/project:sdd-review-tests` | `TEST-REVIEW.md` | test files |
+| 2 | Discuss tests | `/sdd:discuss-tests` | `TEST-SPEC.md` | CONTEXT.md |
+| 3 | Plan tests | `/sdd:plan-tests` | `TEST-PLAN.md` | TEST-SPEC.md |
+| 4 | Review test plan | `/sdd:review-test-plan` | `TEST-PLAN-REVIEW.md` | TEST-PLAN.md |
+| 5 | Execute tests | `/sdd:execute-tests` | код (RED) + коммит | TEST-PLAN-REVIEW.md |
+| 6 | Review tests | `/sdd:review-tests` | `TEST-REVIEW.md` | test files |
 | 7 | Plan implementation | `/gsd:plan-phase` | `XX-PLAN.md` | TEST-REVIEW.md |
 | 8 | Execute implementation | `/gsd:execute-phase` | код (GREEN) + коммит | PLAN.md |
 | 9 | Verify | `/gsd:verify-work` | `VERIFICATION.md` | implementation |
-| 10 | Review implementation | `/project:sdd-review-impl` | `IMPL-REVIEW.md` | VERIFICATION.md |
+| 10 | Review implementation | `/sdd:review-impl` | `IMPL-REVIEW.md` | VERIFICATION.md |
 
 ### Как это работает
 
@@ -80,7 +80,7 @@
 
 GSD native. Обсуждение бизнес-логики, функциональных и нефункциональных требований, границ модуля, архитектурных решений. Результат -- `CONTEXT.md` с секциями decisions, specifics, deferred.
 
-### Шаг 2: Discuss tests (`/project:sdd-discuss-tests`)
+### Шаг 2: Discuss tests (`/sdd:discuss-tests`)
 
 Агент читает CONTEXT.md и предлагает что покрыть тестами. Обсуждение с разработчиком:
 - Какие сценарии критичны?
@@ -90,13 +90,13 @@ GSD native. Обсуждение бизнес-логики, функционал
 
 Результат -- `TEST-SPEC.md`: список сценариев, edge cases, приоритеты. Это спецификация *что* тестировать, не *как*.
 
-### Шаг 3: Plan tests (`/project:sdd-plan-tests`)
+### Шаг 3: Plan tests (`/sdd:plan-tests`)
 
 Агент преобразует TEST-SPEC.md в конкретный план: файлы тестов, структура describe/it, моки, фикстуры. Это план *как* тестировать.
 
 Результат -- `TEST-PLAN.md`: таблица тестов с модулем, сценарием, типом, приоритетом + структура файлов.
 
-### Шаг 4: Review test plan (`/project:sdd-review-test-plan`)
+### Шаг 4: Review test plan (`/sdd:review-test-plan`)
 
 Разработчик и агент ревьюят план тестов. Агент проверяет:
 - Покрытие всех сценариев из TEST-SPEC.md
@@ -106,11 +106,11 @@ GSD native. Обсуждение бизнес-логики, функционал
 
 Обсуждение, правки. Результат -- `TEST-PLAN-REVIEW.md`: замечания, решения, финальный OK.
 
-### Шаг 5: Execute tests (`/project:sdd-execute-tests`)
+### Шаг 5: Execute tests (`/sdd:execute-tests`)
 
 Агент пишет тесты по утверждённому плану. Все тесты RED (failing). Коммит: `test({module}): add failing tests`.
 
-### Шаг 6: Review tests (`/project:sdd-review-tests`)
+### Шаг 6: Review tests (`/sdd:review-tests`)
 
 Ревью кода тестов (не плана, а написанного кода). Разработчик и агент проверяют:
 - Код соответствует плану
@@ -132,7 +132,7 @@ GSD native. Агент реализует код. Тесты переходят 
 
 GSD native. Автоматическая верификация: прогон тестов, проверка coverage, доработки если что-то RED. Результат -- `VERIFICATION.md`.
 
-### Шаг 10: Review implementation (`/project:sdd-review-impl`)
+### Шаг 10: Review implementation (`/sdd:review-impl`)
 
 Ревью кода реализации. Агент проверяет diff по чеклисту (correctness, security, code quality, breaking changes). Обсуждение, правки. Результат -- `IMPL-REVIEW.md`.
 
@@ -149,7 +149,7 @@ CLAUDE.md содержит strict sequence rule. Агент при каждом 
 
 Пример: разработчик вызывает `/gsd:plan-phase` (шаг 7), но `TEST-REVIEW.md` не существует. Агент:
 
-> "Шаг 6 (review тестов) не завершён -- TEST-REVIEW.md отсутствует. Запустите `/project:sdd-review-tests` или введите 'skip' для пропуска."
+> "Шаг 6 (review тестов) не завершён -- TEST-REVIEW.md отсутствует. Запустите `/sdd:review-tests` или введите 'skip' для пропуска."
 
 ---
 
@@ -164,7 +164,7 @@ CLAUDE.md содержит strict sequence rule. Агент при каждом 
     |
 [агент пишет тесты -> RED -> имплементация -> GREEN]
     |
-/project:sdd-review-impl
+/sdd:review-impl
     |
 done
 ```
@@ -178,7 +178,7 @@ Quick tasks не создают отдельные файлы TEST-SPEC.md и т
 | Компонент | При миграции |
 |---|---|
 | CLAUDE.md sequence table | Заменить GSD-команды (шаги 1, 7, 8, 9) на аналоги нового инструмента |
-| `/project:sdd-*` commands | Не меняется -- не зависят от GSD |
+| `/sdd:*` commands | Не меняется -- не зависят от GSD |
 | Артефакты | Путь к папке фазы может измениться |
 | Enforcement logic | Обновить правило проверки артефактов в CLAUDE.md |
 

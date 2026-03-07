@@ -49,15 +49,15 @@ Checkpoint на каждом из 10 шагов. Агент предлагает
 | # | Шаг | Команда | Артефакт | Что нового vs SDD |
 |---|------|---------|----------|--------------------|
 | 1 | Design & Requirements | `/gsd:discuss-phase` | `CONTEXT.md` | **HARD-GATE**: нельзя перейти к шагу 2 без approved design. Socratic questioning, 2-3 подхода с tradeoffs |
-| 2 | Discuss tests | `/project:sad-discuss-tests` | `TEST-SPEC.md` | Явное требование: тесты проверяют *поведение*, не детали реализации |
-| 3 | Plan tests | `/project:sad-plan-tests` | `TEST-PLAN.md` | **Полный код тестов в плане** (не только describe/it имена) |
-| 4 | Review test plan | `/project:sad-review-test-plan` | `TEST-PLAN-REVIEW.md` | **Two-pass review**: покрытие спеки + качество тестов |
-| 5 | Execute tests (RED) | `/project:sad-execute-tests` | код (RED) + коммит | **Iron Law**: удалить impl код. **Verify RED**: обязательная проверка причины падения |
-| 6 | Review tests | `/project:sad-review-tests` | `TEST-REVIEW.md` | Verify RED confirmation включён в review |
+| 2 | Discuss tests | `/sad:discuss-tests` | `TEST-SPEC.md` | Явное требование: тесты проверяют *поведение*, не детали реализации |
+| 3 | Plan tests | `/sad:plan-tests` | `TEST-PLAN.md` | **Полный код тестов в плане** (не только describe/it имена) |
+| 4 | Review test plan | `/sad:review-test-plan` | `TEST-PLAN-REVIEW.md` | **Two-pass review**: покрытие спеки + качество тестов |
+| 5 | Execute tests (RED) | `/sad:execute-tests` | код (RED) + коммит | **Iron Law**: удалить impl код. **Verify RED**: обязательная проверка причины падения |
+| 6 | Review tests | `/sad:review-tests` | `TEST-REVIEW.md` | Verify RED confirmation включён в review |
 | 7 | Plan implementation | `/gsd:plan-phase` | `XX-PLAN.md` | **Полный код в плане** (Superpowers style), задачи по 2-5 минут, точные команды |
 | 8 | Execute implementation | `/gsd:execute-phase` | код (GREEN) + коммит | **3-fix escalation**: 3+ неудачных фикса = стоп. **Verification-before-completion** |
 | 9 | Verify | `/gsd:verify-work` | `VERIFICATION.md` | **Goal-backward + evidence**: stub detection, fresh verification evidence |
-| 10 | Review implementation | `/project:sad-review-impl` | `IMPL-REVIEW.md` | **Two-stage review**: (a) spec compliance, (b) code quality. Severity levels |
+| 10 | Review implementation | `/sad:review-impl` | `IMPL-REVIEW.md` | **Two-stage review**: (a) spec compliance, (b) code quality. Severity levels |
 
 ### Пример: папка фазы после завершения
 
@@ -129,7 +129,7 @@ Checkpoint на каждом из 10 шагов. Агент предлагает
     |
 [verification-before-completion: прогон тестов, проверка вывода]
     |
-/project:sad-review-impl
+/sad:review-impl
     |
 done
 ```
